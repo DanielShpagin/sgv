@@ -107,7 +107,7 @@
             }
 
             var username = window.localStorage.getItem('name');
-            if (username)contact(username);
+            if(username)contact(username);
 
             function range(f) {
                 window.localStorage.setItem('input1', f.comment[1].value);
@@ -116,7 +116,6 @@
                 var i2 = window.localStorage.getItem('input2');
                 if(i1)low = i1;
                 if(i2)high = i2;
-                console.log(f);
                 sgv();
             }
 
