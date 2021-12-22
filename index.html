@@ -230,9 +230,9 @@
                         ctx.lineWidth = 2;
                         ctx.beginPath();
 
-                        if ((object[i].sgv)/18 >= high) {
+                        if (getSgv(i) >= high) {
                         ctx.strokeStyle = ctx.fillStyle = "Yellow";                                    
-                        } else if ((object[i].sgv)/18 <= low) {
+                        } else if (getSgv(i) <= low) {
                             ctx.strokeStyle = ctx.fillStyle = "Red";
                         } else {
                             ctx.strokeStyle = ctx.fillStyle = "Green";
