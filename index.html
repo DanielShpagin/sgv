@@ -64,8 +64,6 @@
             var num = 0;
             var sgvTime = 3;
 
-            
-
             function show() {
                 for (var i = 1; i < 6; i++) {
                     $(`#dia${i}`).show();
@@ -96,7 +94,7 @@
                 } else if (username.includes('.herokuapp.com') && username.includes('https://')) {
                     $('#contact').attr('href', `${username}.herokuapp.com`);
                 } else {
-                    ('#contact').attr('href', `https://${username}.herokuapp.com`);
+                    $('#contact').attr('href', `https://${username}.herokuapp.com`);
                 }
             }
 
@@ -198,9 +196,9 @@
 
                     ctx.beginPath();
                 
-                    if ((object[i].sgv)/18 >= high) {
+                    if (getSgv(i) >= high) {
                         ctx.strokeStyle = ctx.fillStyle = "Yellow";                                    
-                    } else if ((object[i].sgv)/18 <= low) {
+                    } else if (getSgv(i) <= low) {
                         ctx.strokeStyle = ctx.fillStyle = "Red";
                     } else {
                         ctx.strokeStyle = ctx.fillStyle = "Green";
@@ -432,6 +430,7 @@
                     res => res.text().then(
                         text => {
                             const upd = JSON.parse(text);
+                            sgv();
                             if (upd.length) {
                                 // insert new data into the beginning of the array 
                                 upd.push.apply(upd, object);
