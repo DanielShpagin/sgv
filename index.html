@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html>
+    <body>
+        <script src="https://kit.fontawesome.com/225277b5de.js" crossorigin="anonymous"></script>
+        <script src='https://code.jquery.com/jquery-2.1.0.js'></script>
+
+        <div id="mySidenav" class="sidenav">
+            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+            <a href="#">About</a>
+            <a href="#">Services</a>
+            <a href="#">Clients</a>
+            <a id="contact" href="#" target="_blank">Contact</a>
+
+            <form>
+                <p id="con"><b>Nightscout url: </b></p>
+                <p><input id="con1" name="comment">
+                <br><br><input id="con2" type="button" value="ОК" onClick="hrefChange(this.form)"></p>
+
+                <br><p id="dia"><b>Целевой диапазон: </b></p>
+                <p id="low"><b>Низкий: </b></p>
+                <p><input type="number" name="comment">
+                <p id="high"><b>Высокий: </b></p>
+                <p><input type="number" name="comment">
+                <br><br><input type="button" value="ОК" onClick="range(this.form)"></p>
+
+                <br><p id="calibration"><b>Открыть калибровку: </b>
+                <button id="button" type="button" onClick="onClick()" class="fas fa-check"> </button></p>
+                <p id="dia1"><b>Текущий сахар: </b></p>
+                <p><input id="dia2" type="number" name="comment">
+                <br><p id="dia3"><b>Желательний сахар: </b></p>
+                <p><input id="dia4" type="number" name="comment">
+                <br><br><input id="dia5" type="button" value="ОК" onClick="calibration(this.form)"></p>
+            </form>
+        </div>
+
+        <div class="container">
+            <div class="top">
+                <i id="bar" class="fas fa-bars" onclick="openNav()"></i>
+                <a></a>
+            </div>
+            <div id="bottom" class="bottom">
+                <div id="buttons" class="buttons">
+                    <div></div>
+                    <a id="button1" class="myButton">3 HOUR</a>
+                    <a id="button2" class="myButton">6 HOUR</a>
+                    <a id="button3" class="myButton">12 HOUR</a>
+                    <a id="button4" class="myButton">24 HOUR</a>
+                    <a id="button5" class="myButton">2 DAYS</a>
+                    <a id="button6" class="myButton">4 DAYS</a>
+                </div>
+                <canvas id="canvas" width="900" height="900"></canvas>
+            </div>
+        </div>
+
+        <script>
+            var canvas = document.getElementById("canvas");
+            var ctx = canvas.getContext("2d");
+            var high = 9;
+            var veryHigh = 13;
+            var low = 3.5;
+            var veryLow = 2;
+            var tir = 0;
+            var average = 0;
+            var num = 0;
+            var sgvTime = 3;
+
+            
+
+            function show() {
+                for (var i = 1; i < 6; i++) {
+                    $(`#dia${i}`).show();
+                }
+            }
+
+            function hide() {
+                for (var i = 1; i < 6; i++) {
+                    $(`#dia${i}`).hide();
+                }
+            }
+
+            function onClick() {
+                if ($("#button").hasClass('fas fa-check')) {
+                    $('#button').removeClass('fas fa-check').addClass('fas fa-times');
+                    show();
+                } else {
+                    $('#button').removeClass('fas fa-times').addClass('fas fa-check');
+                    hide();
+                }
+            }
+
+            function contact(username) {
+                if (username.includes('https://') && username.includes('.herokuapp.com')) {
+                    $('#contact').attr('href', `${username}`);
+                } else if (username.includes('.herokuapp.com') && username.includes('https://') === false) {
+                    $('#contact').attr('href', `https://${username}`);
+                } else if (username.includes('.herokuapp.com') && username.includes('https://')) {
+                    $('#contact').attr('href', `${username}.herokuapp.com`);
+                } else {
+                    ('#contact').attr('href', `https://${username}.herokuapp.com`);
+                }
+            }
+
+            function hrefChange(f) {
+                window.localStorage.setItem('name', f.comment[0].value);
+                var username = window.localStorage.getItem('name');
+                contact(username);
+            }
+
+            var username = window.localStorage.getItem('name');
+            if (username)contact(username);
+
+            function range(f) {
+                window.localStorage.setItem('input1', f.comment[1].value);
+                window.localStorage.setItem('input2', f.comment[2].value);
+                var i1 = window.localStorage.getItem('input1');
+                var i2 = window.localStorage.getItem('input2');
+                if(i1)low = i1;
+                if(i2)high = i2;
+                console.log(f);
+                sgv();
+            }
+
+            function calibration(f) {
+                window.localStorage.setItem('inp1', f.comment[3].value);
+                window.localStorage.setItem('inp2', f.comment[4].value);
+                var input1 = window.localStorage.getItem('inp1');
+                var input2 = window.localStorage.getItem('inp2');
+                sgv();
+            }
+
+            var i1 = window.localStorage.getItem('input1');
+            var i2 = window.localStorage.getItem('input2');
+
+            if(i1)low = i1;
+            if(i2)high = i2;
+
+            function getSgv(i) {
+                var input1 = window.localStorage.getItem('inp1');
+                var input2 = window.localStorage.getItem('inp2');
+                if (input1) {
+                    if (input2) {
+                        return object[i].sgv/18*((input2/input1).toFixed(3));
+                    } else return object[i].sgv/18;
+                } else return object[i].sgv/18;
+            }
+
+            function createScene() {
+                canvas.width = $('#bottom').width();
+                canvas.height = $('#bottom').height();
+            }
+            createScene();
+
+            function number() {
+                var now = Date.now();
+                var ms = sgvTime*1000*60*60;
+
+                tir = 0;
+                average = 0;
+                num = 0;
+                for (var i = 0; i < object.length; i++) {
+                    if (now - object[i].date > ms) break;
+                    if (object[i].sgv) {
+                        var sgv = getSgv(i);
+                        if (sgv <= high && sgv >= low) {
+                            tir++;
+                        }
+                        average += getSgv(i);
+                        num++;
+                    }
+                }
+                tir = (tir*100/num).toFixed(1);
+                average /= num;
+                average = (average).toFixed(1);
+            }
+            
+            function openNav() {
+                document.getElementById("mySidenav").style.width = "250px";
+            }
+
+            function closeNav() {
+                document.getElementById("mySidenav").style.width = "0";
+            }
+            
+            function drawPoints() {
+                for (var i = 0; i < object.length; i++) {
+                    var w = canvas.width;
+                    var time = sgvTime;
+                    var t0 = Date.now();
+                    var T = time*60*60*1000;
+                    var best = i;
+                    var date = object[i].date;
+                    var x = w - ((t0 - date) / T) * w;
+                    var b = 15;
+                    var h = canvas.height;
+                    var s = getSgv(i);
+                    var y = h-s*h/b;
+                    var bestX = x;
+                    var bestY = y;
+
+                    ctx.beginPath();
+                
+                    if ((object[i].sgv)/18 >= high) {
+                        ctx.strokeStyle = ctx.fillStyle = "Yellow";                                    
+                    } else if ((object[i].sgv)/18 <= low) {
+                        ctx.strokeStyle = ctx.fillStyle = "Red";
+                    } else {
+                        ctx.strokeStyle = ctx.fillStyle = "Green";
+                    }
+
+                    ctx.arc(bestX, bestY, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+            }
+
+            function drawSgv() {
+                var b = 15;
+                var h = canvas.height;
+
+                for (var i = 0; i < object.length; i++) {
+                    var s = getSgv(i);
+                    var y = h-s*h/b;
+                    var w = canvas.width;
+                    var time = sgvTime;
+                    var t0 = Date.now();
+                    var T = time*60*60*1000;
+                    var best = i;
+                    var date = object[i].date;
+                    var x = w - ((t0 - date) / T) * w;
+
+                    if (i !== 0) {
+                        ctx.lineWidth = 2;
+                        ctx.beginPath();
+
+                        if ((object[i].sgv)/18 >= high) {
+                        ctx.strokeStyle = ctx.fillStyle = "Yellow";                                    
+                        } else if ((object[i].sgv)/18 <= low) {
+                            ctx.strokeStyle = ctx.fillStyle = "Red";
+                        } else {
+                            ctx.strokeStyle = ctx.fillStyle = "Green";
+                        }
+
+                        ctx.moveTo(x, y);
+                        ctx.lineTo(x1, y1);
+                        ctx.stroke();
+                    }
+
+                    var x1 = x;
+                    var y1 = y;
+                }
+            }
+
+            function drawLines() {
+                var b1 = 15;
+                var h1 = canvas.height;
+                var w1 = canvas.width;
+                var y2 = h1-low*h1/b1;
+                var y3 = h1-high*h1/b1;
+                var y4 = h1-veryLow*h1/b1;
+                var y5 = h1-veryHigh*h1/b1;
+                var hourX = canvas.width/sgvTime;
+                var hours = new Date().getHours();
+                hours -= sgvTime;
+                
+                for (var i = 0; i < sgvTime; i++) {
+                    if (i === 0) {
+                        hours++;
+                    }
+                    hours++;
+                    ctx.font = "10px Comic Sans MS";
+                    ctx.fillStyle = "White";
+                    ctx.textAlign = "left";
+                    ctx.textBaseline = "top";
+                    ctx.fillText(`${(hours+24)%24}:00`, hourX-10, y5-20);
+                    ctx.beginPath();
+
+                    ctx.strokeStyle = "White";
+                    ctx.lineWidth = 1;
+
+                    ctx.moveTo(hourX, y5);
+                    ctx.lineTo(hourX, canvas.height);
+                    ctx.stroke();
+                    hourX += canvas.width/sgvTime;
+                }
+                
+                ctx.strokeStyle = "Red";
+                
+                ctx.beginPath();
+                ctx.moveTo(40, y2);
+                ctx.lineTo(w1, y2);
+                ctx.stroke();
+
+                ctx.strokeStyle = "Yellow";
+
+                ctx.font = "10px Comic Sans MS";
+                ctx.fillStyle = "White";
+                ctx.textAlign = "left";
+                ctx.textBaseline = "top";
+                ctx.fillText(`${high}`, 10, y3-3);
+                ctx.fillText(`${low}`, 10, y2-3);
+                ctx.fillText(`${veryLow}`, 10, y4-3);
+                ctx.fillText(`${veryHigh}`, 10, y5-3);
+
+                ctx.beginPath();
+                ctx.moveTo(40, y3);
+                ctx.lineTo(w1, y3);
+                ctx.stroke();
+
+                ctx.strokeStyle = "Red";
+
+                ctx.beginPath();
+                ctx.moveTo(40, y4);
+                ctx.lineTo(w1, y4);
+                ctx.stroke();
+
+                ctx.strokeStyle = "Yellow";
+
+                ctx.beginPath();
+                ctx.moveTo(40, y5);
+                ctx.lineTo(w1, y5);
+                ctx.stroke();
+            }
+
+            function clickCanvas() {
+                var canvas = document.getElementById("canvas");
+                var ctx = canvas.getContext("2d");
+                $('#canvas').click(function (event) {
+                    ctx.clearRect(0, 0, canvas.width, canvas.height);
+                    showStatistics();
+                    drawLines();
+                    drawPoints();
+                    drawSgv();
+                    var w = canvas.width;
+                    var time = sgvTime;
+                    var t0 = Date.now();
+                    var T = time*60*60*1000;
+                    var ox = event.offsetX;
+                    var oy = event.offsetY;
+                    var rMin = w;
+                    var best = 0;
+
+                    for (var i = 0; i < object.length; i++) {
+                        var date = object[i].date;
+                        var x = w - ((t0 - date) / T) * w;
+                        var b = 15;
+                        var h = canvas.height;
+                        var s = getSgv(i);
+                        var y = h-s*h/b;
+                        var r = Math.sqrt((x-ox)*(x-ox)+(y-oy)*(y-oy));
+                        
+                        if (r < rMin) {
+                            rMin = r;
+                            best = i;
+                            var bestX = x;
+                            var bestY = y;
+                        }
+                    }
+                    ctx.fillStyle = "rgb(34, 47, 93)";
+                    ctx.font = "20px Comic Sans MS";
+                    ctx.fillStyle = "White";
+                    ctx.textAlign = "left";
+                    ctx.textBaseline = "top";
+                    ctx.fillText(`SUGAR: ${(getSgv(best)).toFixed(1)}`, w/2, 80)
+
+                    ctx.beginPath();
+                    ctx.fillStyle = "White";
+                    ctx.arc(bestX, bestY, 3, 0, Math.PI * 2);
+                    ctx.fill();
+                })
+            }
+
+            function clickButtons() {
+                for (var i = 0; i < 6; i++) {
+                    $(`#button${(i+1)}`).click({i}, function (event) {
+                        sgvTime = Math.pow(2, event.data.i)*3;
+                        console.log(sgvTime);
+                        sgv();
+                    })
+                }
+            }
+
+            function showStatistics() {
+                var input = localStorage.getItem('input');
+                ctx.fillStyle = "rgb(34, 47, 93)";
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                ctx.font = "30px Comic Sans MS";
+                ctx.fillStyle = "White";
+                ctx.textAlign = "left";
+                ctx.textBaseline = "top";
+                ctx.fillText(`Целевой диапазон: ${low} ... ${high}`, 10, 5);
+                ctx.fillText("TIR: " + tir + "%", 10, 50);
+                ctx.fillText(`Average: ${average}`, 10, 85);
+                ctx.fillText(`SUGAR: ${(getSgv(0)).toFixed(1)}`, canvas.width/2-25, 10);
+            }
+
+            function sgv() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                number();
+                showStatistics()
+                drawPoints();
+                drawLines();
+                clickCanvas();
+                drawSgv();
+                clickButtons();
+            }
+
+            var count = 1000;
+            const userurl = 'danielshpagin.herokuapp.com';
+            const webproxy = 'https://translate-3dcoat.herokuapp.com/';
+            var object = [];
+            var prevKeeper = '';
+
+            // call this function anytime, it updates the objects array 
+            // and calls the callback if any changes happened
+            function update(callback) {
+                const keeperName = 'ns-sgv-data-' + userurl; 
+                // check if the data was already got from the local storage
+                if (keeperName !== prevKeeper) {
+                    prevKeeper = keeperName;
+                    object = [];
+                    // check if something already kept in the local storage
+                    var prev = window.localStorage.getItem(keeperName);
+                    if (prev) object = JSON.parse(prev);
+                }
+                var date = 0;
+                if (object.length) {
+                    const last = object[0];
+                    if (last && last.date) date = last.date;
+                }
+                // url includes the start date and the maximal count of entries
+                var url = `${webproxy}${userurl}/api/v1/entries.json?find[date][$gt]=${date}&count=${count}`;
+                // send request for the data
+                fetch(url).then(
+                    res => res.text().then(
+                        text => {
+                            const upd = JSON.parse(text);
+                            sgv();
+                            if (upd.length) {
+                                // insert new data into the beginning of the array 
+                                upd.push.apply(upd, object);
+                                object = upd;
+                                // store updated object in the local storage
+                                if (object.length) window.localStorage.setItem(keeperName, JSON.stringify(object));
+                                if (callback) callback();
+                                
+                            }
+                        }
+                    )
+                );
+            }
+
+            // the example of the update usage,
+            // we just printing the count of updated records
+            update(() => sgv());
+            setInterval(update, 60000);
+        </script>
+    </body>
+
+    <style>
+        #low{
+            color:rgb(90, 123, 231);
+        }
+        #high{
+            color:rgb(90, 123, 231);
+        }
+        #dia{
+            color:rgb(90, 123, 231);
+        }
+        #dia1{
+            display: none; 
+            color:rgb(90, 123, 231);
+        }
+        #dia2{
+            display: none; 
+        }
+        #dia3{
+            display: none;
+            color:rgb(90, 123, 231);
+        }
+        #dia4{
+            display: none; 
+        }
+        #dia5{
+            display: none; 
+        }
+        #calibration{
+            color:rgb(90, 123, 231);
+        }
+        #con{
+            color:rgb(90, 123, 231);
+        }
+        .buttons {
+            width: auto;
+            display: grid;
+            grid-template-columns: 1fr auto auto auto auto auto auto;
+            z-index: 1;
+        }
+        .myButton {
+            box-shadow:inset 0px 1px 0px 0px #ffffff;
+            background:linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
+            background-color:#ededed;
+            border-radius:6px;
+            border:1px solid #dcdcdc;
+            display:inline-block;
+            cursor:pointer;
+            color:#777777;
+            font-family:Arial;
+            font-size:15px;
+            font-weight:bold;
+            padding:8px 24px;
+            text-decoration:none;
+            text-shadow:0px 1px 0px #ffffff;
+        }
+        .myButton:hover {
+            background:linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%);
+            background-color:#dfdfdf;
+        }
+        .myButton:active {
+            position:relative;
+            top:1px;
+        }
+        #canvas{
+            position: absolute;
+            top: 100;
+            left: 0;
+            z-index: 0;
+        }
+        body{
+            background-color: rgb(34, 47, 93);
+        }
+        .container{
+            display: grid;
+            width: 100%;
+            height: 100%;
+            grid-template-rows: auto 1fr;
+        }
+        .top{
+            display: grid;
+            width: 100.95%;
+            height: auto;
+            grid-template-columns: auto 1fr;
+            background-color: rgb(30, 40, 77);
+            position:relative;
+            top: -10px;
+            left: -10px;
+        }
+        .bottom{
+            display: grid;
+            width: 100%;
+            height: 100%;
+            grid-template-rows: auto 1fr;
+        }
+        #bar{
+            font-size: 50px;
+            position:relative;
+            left: 10px;
+            color: rgb(14, 17, 46);
+        }
+        /* The side navigation menu */
+        .sidenav {
+            height: 100%; /* 100% Full-height */
+            width: 0; /* 0 width - change this with JavaScript */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Stay on top */
+            top: 0; /* Stay at the top */
+            left: 0;
+            background-color: rgb(9, 8, 19); /* Black*/
+            overflow-x: hidden; /* Disable horizontal scroll */
+            padding-top: 60px; /* Place content 60px from the top */
+            transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
+        }
+
+        /* The navigation menu links */
+        .sidenav a {
+            padding: 8px 8px 8px 32px;
+            text-decoration: none;
+            font-size: 25px;
+            color: #5043c5;
+            display: block;
+            transition: 0.3s;   
+        }
+
+        /* When you mouse over the navigation links, change their color */
+        .sidenav a:hover {
+            color: #e1deff;
+        }
+
+        /* Position and style the close button (top right corner) */
+        .sidenav .closebtn {
+            position: absolute;
+            top: 0;
+            right: 25px;
+            font-size: 36px;
+            margin-left: 50px;
+        }
+
+        /* Style page content - use this if you want to push the page content to the right when you open the side navigation */
+        #main {
+            transition: margin-left .5s;
+            padding: 20px;
+        }
+    </style>
+</html>
