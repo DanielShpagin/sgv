@@ -436,7 +436,6 @@
                                 // insert new data into the beginning of the array 
                                 upd.push.apply(upd, object);
                                 object = upd;
-                                console.log(object);
                                 // store updated object in the local storage
                                 if (object.length) window.localStorage.setItem(keeperName, JSON.stringify(object));
                                 if (callback) callback();
