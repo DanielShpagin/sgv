@@ -429,8 +429,7 @@
                 fetch(url).then(
                     res => res.text().then(
                         text => {
-                            const upd = JSON.parse(text);
-                            sgv();
+                            const upd = JSON.parse(text);                            
                             if (upd.length) {
                                 // insert new data into the beginning of the array 
                                 upd.push.apply(upd, object);
@@ -449,6 +448,7 @@
             // we just printing the count of updated records
             update(() => sgv());
             setInterval(update, 60000);
+            if(object.length)sgv();
         </script>
     </body>
 
