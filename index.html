@@ -12,24 +12,41 @@
             <a id="contact" href="#" target="_blank">Contact</a>
 
             <form>
-                <p id="con"><b>Nightscout url: </b></p>
-                <p><input id="con1" name="comment">
-                <br><br><input id="con2" type="button" value="ОК" onClick="hrefChange(this.form)"></p>
-
-                <br><p id="dia"><b>Целевой диапазон: </b></p>
+                <p id="url"><b>Nightscout url: </b>
+                <button id="urlbut1" type="button" onClick="onClick1()" class="fas fa-check"> </button></p>
+                <p><input id="urlcom" name="comment">
+                <input id="urlbut2" type="button" value="ОК" onClick="hrefChange(this.form)"></p>
+            </form>
+                
+            <form>
+                <p id="dia"><b>Целевой диапазон: </b>
+                <button id="diabut1" type="button" onClick="onClick2()" class="fas fa-check"> </button></p>
                 <p id="low"><b>Низкий: </b></p>
-                <p><input type="number" name="comment">
+                <p><input id="diacom1" type="number" name="comment">
                 <p id="high"><b>Высокий: </b></p>
-                <p><input type="number" name="comment">
-                <br><br><input type="button" value="ОК" onClick="range(this.form)"></p>
+                <p><input id="diacom2" type="number" name="comment">
+                <input id="diabut2" type="button" value="ОК" onClick="range(this.form)"></p>
+            </form>
 
-                <br><p id="calibration"><b>Открыть калибровку: </b>
-                <button id="button" type="button" onClick="onClick()" class="fas fa-check"> </button></p>
-                <p id="dia1"><b>Текущий сахар: </b></p>
-                <p><input id="dia2" type="number" name="comment">
-                <br><p id="dia3"><b>Желательний сахар: </b></p>
-                <p><input id="dia4" type="number" name="comment">
-                <br><br><input id="dia5" type="button" value="ОК" onClick="calibration(this.form)"></p>
+            <form>
+                <p id="calibration"><b>Калибровка: </b>
+                <button id="calbut1" type="button" onClick="onClick3()" class="fas fa-check"> </button></p>
+                <p id="cal1"><b>Текущий сахар: </b></p>
+                <p><input id="calcom1" type="number" name="comment">
+                <p id="cal2"><b>Желательний сахар: </b></p>
+                <input id="calcom2" type="number" name="comment">
+                <input id="calbut2" type="button" value="ОК" onClick="calibration(this.form)">
+            </form>
+
+            <form>
+                <p id="time"><b>Time line: </b>
+                <button id="timebut" type="button" onClick="onClick4()" class="fas fa-check"> </button></p>
+                <input id="timebut1" type="button" value="3 HOURS" onClick="clickButtons(this.form)"><br>
+                <input id="timebut2" type="button" value="6 HOURS"><br>
+                <input id="timebut3" type="button" value="12 HOURS"><br>
+                <input id="timebut4" type="button" value="24 HOURS"><br>
+                <input id="timebut5" type="button" value="2 DAYS"><br>
+                <input id="timebut6" type="button" value="4 DAYS">
             </form>
         </div>
 
@@ -39,15 +56,6 @@
                 <a></a>
             </div>
             <div id="bottom" class="bottom">
-                <div id="buttons" class="buttons">
-                    <div></div>
-                    <a id="button1" class="myButton">3 HOUR</a>
-                    <a id="button2" class="myButton">6 HOUR</a>
-                    <a id="button3" class="myButton">12 HOUR</a>
-                    <a id="button4" class="myButton">24 HOUR</a>
-                    <a id="button5" class="myButton">2 DAYS</a>
-                    <a id="button6" class="myButton">4 DAYS</a>
-                </div>
                 <canvas id="canvas" width="900" height="900"></canvas>
             </div>
         </div>
@@ -64,25 +72,97 @@
             var num = 0;
             var sgvTime = 3;
 
-            function show() {
-                for (var i = 1; i < 6; i++) {
-                    $(`#dia${i}`).show();
+            function show1() {
+                $('#urlcom').show();
+                $('#urlbut2').show();
+            }
+
+            function hide1() {
+                $('#urlcom').hide();
+                $('#urlbut2').hide();
+            }
+
+            function show2() {
+                $('#low').show();
+                $('#diacom1').show();
+                $('#high').show();
+                $('#diacom2').show();
+                $('#diabut2').show();
+            }
+
+            function hide2() {
+                $('#low').hide();
+                $('#diacom1').hide();
+                $('#high').hide();
+                $('#diacom2').hide();
+                $('#diabut2').hide();
+            }
+
+            function show3() {
+                $('#cal1').show();
+                $('#calcom1').show();
+                $('#cal2').show();
+                $('#calcom2').show();
+                $('#calbut2').show();
+            }
+
+            function hide3() {
+                $('#cal1').hide();
+                $('#calcom1').hide();
+                $('#cal2').hide();
+                $('#calcom2').hide();
+                $('#calbut2').hide();
+            }
+
+            function show4() {
+                for(var i = 1; i < 7; i++) {
+                    $(`#timebut${i}`).show();
                 }
             }
 
-            function hide() {
-                for (var i = 1; i < 6; i++) {
-                    $(`#dia${i}`).hide();
+            function hide4() {
+                for(var i = 1; i < 7; i++) {
+                    $(`#timebut${i}`).hide();
                 }
             }
 
-            function onClick() {
-                if ($("#button").hasClass('fas fa-check')) {
-                    $('#button').removeClass('fas fa-check').addClass('fas fa-times');
-                    show();
+            function onClick1() {
+                if ($("#urlbut1").hasClass('fas fa-check')) {
+                    $('#urlbut1').removeClass('fas fa-check').addClass('fas fa-times');
+                    show1();
                 } else {
-                    $('#button').removeClass('fas fa-times').addClass('fas fa-check');
-                    hide();
+                    $('#urlbut1').removeClass('fas fa-times').addClass('fas fa-check');
+                    hide1();
+                }
+            }
+
+            function onClick2() {
+                if ($("#diabut1").hasClass('fas fa-check')) {
+                    $('#diabut1').removeClass('fas fa-check').addClass('fas fa-times');
+                    show2();
+                } else {
+                    $('#diabut1').removeClass('fas fa-times').addClass('fas fa-check');
+                    hide2();
+                }
+            }
+
+            function onClick3() {
+                if ($("#calbut1").hasClass('fas fa-check')) {
+                    $('#calbut1').removeClass('fas fa-check').addClass('fas fa-times');
+                    show3();
+                } else {
+                    $('#calbut1').removeClass('fas fa-times').addClass('fas fa-check');
+                    hide3();
+                }
+            }
+
+            function onClick4() {
+                if ($("#timebut").hasClass('fas fa-check')) {
+                    $('#timebut').removeClass('fas fa-check').addClass('fas fa-times');
+                    show4();
+                } else {
+                    $('#timebut').removeClass('fas fa-times').addClass('fas fa-check');
+                    hide4();
                 }
             }
 
@@ -98,6 +178,16 @@
                 }
             }
 
+            function clickButtons() {
+                for (var i = 0; i < 6; i++) {
+                    $(`#timebut${(i+1)}`).click({i}, function (event) {
+                        sgvTime = Math.pow(2, event.data.i)*3;
+                        console.log(sgvTime);
+                        sgv();
+                    })
+                }
+            }
+
             function hrefChange(f) {
                 window.localStorage.setItem('name', f.comment[0].value);
                 var username = window.localStorage.getItem('name');
@@ -108,8 +198,8 @@
             if(username)contact(username);
 
             function range(f) {
-                window.localStorage.setItem('input1', f.comment[1].value);
-                window.localStorage.setItem('input2', f.comment[2].value);
+                window.localStorage.setItem('input1', f.comment[0].value);
+                window.localStorage.setItem('input2', f.comment[1].value);
                 var i1 = window.localStorage.getItem('input1');
                 var i2 = window.localStorage.getItem('input2');
                 if(i1)low = i1;
@@ -118,8 +208,8 @@
             }
 
             function calibration(f) {
-                window.localStorage.setItem('inp1', f.comment[3].value);
-                window.localStorage.setItem('inp2', f.comment[4].value);
+                window.localStorage.setItem('inp1', f.comment[0].value);
+                window.localStorage.setItem('inp2', f.comment[1].value);
                 var input1 = window.localStorage.getItem('inp1');
                 var input2 = window.localStorage.getItem('inp2');
                 sgv();
@@ -136,7 +226,7 @@
                 var input2 = window.localStorage.getItem('inp2');
                 if (input1) {
                     if (input2) {
-                        return object[i].sgv/18*((input2/input1).toFixed(3));
+                        return object[i].sgv/18*((input2/input1).toFixed(1));
                     } else return object[i].sgv/18;
                 } else return object[i].sgv/18;
             }
@@ -365,16 +455,6 @@
                 })
             }
 
-            function clickButtons() {
-                for (var i = 0; i < 6; i++) {
-                    $(`#button${(i+1)}`).click({i}, function (event) {
-                        sgvTime = Math.pow(2, event.data.i)*3;
-                        console.log(sgvTime);
-                        sgv();
-                    })
-                }
-            }
-
             function showStatistics() {
                 var input = localStorage.getItem('input');
                 ctx.fillStyle = "rgb(34, 47, 93)";
@@ -453,43 +533,78 @@
     </body>
 
     <style>
-        #low{
+        #url{
             color:rgb(90, 123, 231);
         }
-        #high{
-            color:rgb(90, 123, 231);
+        #urlcom{
+            display: none;
         }
+        #urlbut2{
+            display: none;
+        }
+
         #dia{
             color:rgb(90, 123, 231);
         }
-        #dia1{
-            display: none; 
+        #low{
             color:rgb(90, 123, 231);
-        }
-        #dia2{
-            display: none; 
-        }
-        #dia3{
             display: none;
+        }
+        #diacom1{
+            display: none;
+        }
+        #high{
             color:rgb(90, 123, 231);
+            display: none;
         }
-        #dia4{
-            display: none; 
+        #diacom2{
+            display: none;
         }
-        #dia5{
-            display: none; 
+        #diabut2{
+            display: none;
         }
+
         #calibration{
             color:rgb(90, 123, 231);
         }
-        #con{
+        #cal1{
+            color:rgb(90, 123, 231);
+            display: none;
+        }
+        #calcom1{
+            display: none;
+        }
+        #cal2{
+            color:rgb(90, 123, 231);
+            display: none;
+        }
+        #calcom2{
+            display: none;
+        }
+        #calbut2{
+            display: none;
+        }
+
+        #time{
             color:rgb(90, 123, 231);
         }
-        .buttons {
-            width: auto;
-            display: grid;
-            grid-template-columns: 1fr auto auto auto auto auto auto;
-            z-index: 1;
+        #timebut1{
+            display: none;
+        }
+        #timebut2{
+            display: none;
+        }
+        #timebut3{
+            display: none;
+        }
+        #timebut4{
+            display: none;
+        }
+        #timebut5{
+            display: none;
+        }
+        #timebut6{
+            display: none;
         }
         .myButton {
             box-shadow:inset 0px 1px 0px 0px #ffffff;
