@@ -232,8 +232,8 @@
             }
 
             function createScene() {
-                canvas.width = $('#bottom').width();
-                canvas.height = $('#bottom').height();
+                canvas.width = $(window).width();
+                canvas.height = $(window).height();
             }
             createScene();
 
@@ -511,19 +511,20 @@
                         text => {
                             const upd = JSON.parse(text);                            
                             if (upd.length) {
-                                // insert new data into the beginning of the array 
+                                // insert new data into the beginning of the array
                                 upd.push.apply(upd, object);
                                 object = upd;
                                 // store updated object in the local storage
-                                if (object.length) window.localStorage.setItem(keeperName, JSON.stringify(object));
+                                if (object.length >= 10000){
+                                    object.splice(10000, object.length);
+                                }
                                 if (callback) callback();
-                                
                             }
                         }
                     )
                 );
             }
-
+            
             // the example of the update usage,
             // we just printing the count of updated records
             update(() => sgv());
