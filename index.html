@@ -509,14 +509,20 @@
                 fetch(url).then(
                     res => res.text().then(
                         text => {
-                            const upd = JSON.parse(text);                            
+                            const upd = JSON.parse(text);
                             if (upd.length) {
                                 // insert new data into the beginning of the array
                                 upd.push.apply(upd, object);
                                 object = upd;
                                 // store updated object in the local storage
+                                try {
+                                    if (object.length) window.localStorage.setItem(keeperName, JSON.stringify(object));
+                                } catch(e){
+                                    console.error(e);
+                                    window.localStorage.removeItem(keeperName);
+                                }
                                 if (object.length >= 10000){
-                                    object.splice(10000, object.length);
+                                    object.splice(10000, object.length-10000);
                                 }
                                 if (callback) callback();
                             }
@@ -524,11 +530,11 @@
                     )
                 );
             }
-            
+
             // the example of the update usage,
             // we just printing the count of updated records
             update(() => sgv());
-            setInterval(update, 60000);
+            setInterval(() => update(() => sgv()), object[0].date-object[1].date);
             if(object.length)sgv();
         </script>
     </body>
