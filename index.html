@@ -6,13 +6,10 @@
 
         <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
-            <a href="#">About</a>
-            <a href="#">Services</a>
-            <a href="#">Clients</a>
             <a id="contact" href="#" target="_blank">Contact</a>
 
             <form>
-                <p id="url"><b>Nightscout url: </b>
+                <p id="url"><b> Nightscout url: </b>
                 <button id="urlbut1" type="button" onClick="onClick1()" class="fas fa-check"> </button></p>
                 <p><input id="urlcom" name="comment">
                 <input id="urlbut2" type="button" value="ОК" onClick="hrefChange(this.form)"></p>
@@ -52,8 +49,7 @@
 
         <div class="container">
             <div class="top">
-                <i id="bar" class="fas fa-bars" onclick="openNav()"></i>
-                <a></a>
+                <i id="bar" class="fa fa-bars" onclick="openNav()"></i>
             </div>
             <div id="bottom" class="bottom">
                 <canvas id="canvas" width="900" height="900"></canvas>
@@ -61,6 +57,7 @@
         </div>
 
         <script>
+
             var canvas = document.getElementById("canvas");
             var ctx = canvas.getContext("2d");
             var high = 9;
@@ -441,7 +438,7 @@
                             var bestY = y;
                         }
                     }
-                    ctx.fillStyle = "rgb(34, 47, 93)";
+                    ctx.fillStyle = "black";
                     ctx.font = "20px Comic Sans MS";
                     ctx.fillStyle = "White";
                     ctx.textAlign = "left";
@@ -457,7 +454,7 @@
 
             function showStatistics() {
                 var input = localStorage.getItem('input');
-                ctx.fillStyle = "rgb(34, 47, 93)";
+                ctx.fillStyle = "rgb(50, 50, 50)";
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
                 ctx.font = "30px Comic Sans MS";
                 ctx.fillStyle = "White";
@@ -541,77 +538,128 @@
 
     <style>
         #url{
-            color:rgb(90, 123, 231);
+            color:rgb(173, 173, 173);
+            font-size: 20px;
+            position:relative;
+            left: 10px;
         }
         #urlcom{
             display: none;
+            position:relative;
+            left: 10px;
         }
         #urlbut2{
             display: none;
+            position:relative;
+            left: 10px;
         }
 
         #dia{
-            color:rgb(90, 123, 231);
+            color:rgb(173, 173, 173);
+            font-size: 20px;
+            position:relative;
+            left: 10px;
         }
         #low{
-            color:rgb(90, 123, 231);
+            color:rgb(173, 173, 173);
+            font-size: 20px;
             display: none;
+            position:relative;
+            left: 10px;
         }
         #diacom1{
-            display: none;
+            display: none;position:relative;
+            left: 10px;
         }
         #high{
-            color:rgb(90, 123, 231);
+            color:rgb(173, 173, 173);
+            font-size: 20px;
             display: none;
+            position:relative;
+            left: 10px;
         }
         #diacom2{
             display: none;
+            position:relative;
+            left: 10px;
         }
         #diabut2{
             display: none;
+            position:relative;
+            left: 10px;
         }
 
         #calibration{
-            color:rgb(90, 123, 231);
+            color:rgb(173, 173, 173);
+            font-size: 20px;
+            position:relative;
+            left: 10px;
         }
         #cal1{
-            color:rgb(90, 123, 231);
+            color:rgb(173, 173, 173);
+            font-size: 20px;
             display: none;
+            position:relative;
+            left: 10px;
         }
         #calcom1{
             display: none;
+            position:relative;
+            left: 10px;
         }
         #cal2{
-            color:rgb(90, 123, 231);
+            color:rgb(173, 173, 173);
+            font-size: 20px;
             display: none;
+            position:relative;
+            left: 10px;
         }
         #calcom2{
             display: none;
+            position:relative;
+            left: 10px;
         }
         #calbut2{
             display: none;
+            position:relative;
+            left: 10px;
         }
 
         #time{
-            color:rgb(90, 123, 231);
+            color:rgb(173, 173, 173);
+            font-size: 20px;
+            position:relative;
+            left: 10px;
         }
         #timebut1{
             display: none;
+            position:relative;
+            left: 10px;
         }
         #timebut2{
             display: none;
+            position:relative;
+            left: 10px;
         }
         #timebut3{
             display: none;
+            position:relative;
+            left: 10px;
         }
         #timebut4{
             display: none;
+            position:relative;
+            left: 10px;
         }
         #timebut5{
             display: none;
+            position:relative;
+            left: 10px;
         }
         #timebut6{
             display: none;
+            position:relative;
+            left: 10px;
         }
         .myButton {
             box-shadow:inset 0px 1px 0px 0px #ffffff;
@@ -644,7 +692,7 @@
             z-index: 0;
         }
         body{
-            background-color: rgb(34, 47, 93);
+            background-color: rgb(50, 50, 50);
         }
         .container{
             display: grid;
@@ -657,7 +705,7 @@
             width: 100.95%;
             height: auto;
             grid-template-columns: auto 1fr;
-            background-color: rgb(30, 40, 77);
+            background-color: #222222;
             position:relative;
             top: -10px;
             left: -10px;
@@ -672,7 +720,10 @@
             font-size: 50px;
             position:relative;
             left: 10px;
-            color: rgb(14, 17, 46);
+            color: white;
+        }
+        #bar:hover{
+            color: #c54343;
         }
         /* The side navigation menu */
         .sidenav {
@@ -682,7 +733,7 @@
             z-index: 1; /* Stay on top */
             top: 0; /* Stay at the top */
             left: 0;
-            background-color: rgb(9, 8, 19); /* Black*/
+            background-color: rgb(0, 0, 0); /* Black*/
             overflow-x: hidden; /* Disable horizontal scroll */
             padding-top: 60px; /* Place content 60px from the top */
             transition: 0.5s; /* 0.5 second transition effect to slide in the sidenav */
@@ -693,14 +744,14 @@
             padding: 8px 8px 8px 32px;
             text-decoration: none;
             font-size: 25px;
-            color: #5043c5;
+            color: #e1deff;
             display: block;
             transition: 0.3s;   
         }
 
         /* When you mouse over the navigation links, change their color */
         .sidenav a:hover {
-            color: #e1deff;
+            color: #c54343;
         }
 
         /* Position and style the close button (top right corner) */
