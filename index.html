@@ -8,43 +8,22 @@
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
             <a id="contact" href="#" target="_blank">Contact</a>
 
-            <form>
-                <p id="url"><b> Nightscout url: </b>
-                <button id="urlbut1" type="button" onClick="onClick1()" class="fas fa-check"> </button></p>
-                <p><input id="urlcom" name="comment">
-                <input id="urlbut2" type="button" value="ОК" onClick="hrefChange(this.form)"></p>
-            </form>
-                
-            <form>
-                <p id="dia"><b>Целевой диапазон: </b>
-                <button id="diabut1" type="button" onClick="onClick2()" class="fas fa-check"> </button></p>
-                <p id="low"><b>Низкий: </b></p>
-                <p><input id="diacom1" type="number" name="comment">
-                <p id="high"><b>Высокий: </b></p>
-                <p><input id="diacom2" type="number" name="comment">
-                <input id="diabut2" type="button" value="ОК" onClick="range(this.form)"></p>
-            </form>
+            <a id="show_dlg_url">Nightscout url</a>
 
-            <form>
-                <p id="calibration"><b>Калибровка: </b>
-                <button id="calbut1" type="button" onClick="onClick3()" class="fas fa-check"> </button></p>
-                <p id="cal1"><b>Текущий сахар: </b></p>
-                <p><input id="calcom1" type="number" name="comment">
-                <p id="cal2"><b>Желательний сахар: </b></p>
-                <input id="calcom2" type="number" name="comment">
-                <input id="calbut2" type="button" value="ОК" onClick="calibration(this.form)">
-            </form>
+            <a id="show_dialog_dia">Целевой диапазон</a>
 
-            <form>
-                <p id="time"><b>Time line: </b>
-                <button id="timebut" type="button" onClick="onClick4()" class="fas fa-check"> </button></p>
-                <input id="timebut1" type="button" value="3 HOURS" onClick="clickButtons(this.form)">
-                <input id="timebut2" type="button" value="6 HOURS">
-                <input id="timebut3" type="button" value="12 HOURS">
-                <input id="timebut4" type="button" value="24 HOURS">
-                <input id="timebut5" type="button" value="2 DAYS">
-                <input id="timebut6" type="button" value="4 DAYS">
-            </form>
+            <a id="show_dlg_cal">Калибровка</a>
+
+            <div id="buttons1">
+                <div id="buttons2">
+                    <br><button id="button1" class="myButton">3 HOURS</button><br>
+                    <button id="button2" class="myButton">6 HOURS</button><br>
+                    <button id="button3" class="myButton">12 HOURS</button><br>
+                    <button id="button4" class="myButton">24 HOURS</button><br>
+                    <button id="button5" class="myButton">2 DAYS</button><br>
+                    <button id="button6" class="myButton">4 DAYS</button> 
+                </div>
+            </div>
         </div>
 
         <div class="container">
@@ -57,7 +36,6 @@
         </div>
 
         <script>
-
             var canvas = document.getElementById("canvas");
             var ctx = canvas.getContext("2d");
             var high = 9;
@@ -68,102 +46,9 @@
             var average = 0;
             var num = 0;
             var sgvTime = 3;
+            var sgvTimeAgo = 0;
 
-            function show1() {
-                $('#urlcom').show();
-                $('#urlbut2').show();
-            }
-
-            function hide1() {
-                $('#urlcom').hide();
-                $('#urlbut2').hide();
-            }
-
-            function show2() {
-                $('#low').show();
-                $('#diacom1').show();
-                $('#high').show();
-                $('#diacom2').show();
-                $('#diabut2').show();
-            }
-
-            function hide2() {
-                $('#low').hide();
-                $('#diacom1').hide();
-                $('#high').hide();
-                $('#diacom2').hide();
-                $('#diabut2').hide();
-            }
-
-            function show3() {
-                $('#cal1').show();
-                $('#calcom1').show();
-                $('#cal2').show();
-                $('#calcom2').show();
-                $('#calbut2').show();
-            }
-
-            function hide3() {
-                $('#cal1').hide();
-                $('#calcom1').hide();
-                $('#cal2').hide();
-                $('#calcom2').hide();
-                $('#calbut2').hide();
-            }
-
-            function show4() {
-                for(var i = 1; i < 7; i++) {
-                    $(`#timebut${i}`).show();
-                }
-            }
-
-            function hide4() {
-                for(var i = 1; i < 7; i++) {
-                    $(`#timebut${i}`).hide();
-                }
-            }
-
-            function onClick1() {
-                if ($("#urlbut1").hasClass('fas fa-check')) {
-                    $('#urlbut1').removeClass('fas fa-check').addClass('fas fa-times');
-                    show1();
-                } else {
-                    $('#urlbut1').removeClass('fas fa-times').addClass('fas fa-check');
-                    hide1();
-                }
-            }
-
-            function onClick2() {
-                if ($("#diabut1").hasClass('fas fa-check')) {
-                    $('#diabut1').removeClass('fas fa-check').addClass('fas fa-times');
-                    show2();
-                } else {
-                    $('#diabut1').removeClass('fas fa-times').addClass('fas fa-check');
-                    hide2();
-                }
-            }
-
-            function onClick3() {
-                if ($("#calbut1").hasClass('fas fa-check')) {
-                    $('#calbut1').removeClass('fas fa-check').addClass('fas fa-times');
-                    show3();
-                } else {
-                    $('#calbut1').removeClass('fas fa-times').addClass('fas fa-check');
-                    hide3();
-                }
-            }
-
-            function onClick4() {
-                if ($("#timebut").hasClass('fas fa-check')) {
-                    $('#timebut').removeClass('fas fa-check').addClass('fas fa-times');
-                    show4();
-                } else {
-                    $('#timebut').removeClass('fas fa-times').addClass('fas fa-check');
-                    hide4();
-                }
-            }
-
-            function contact(username) {
+            function contact() {
                 if (username.includes('https://') && username.includes('.herokuapp.com')) {
                     $('#contact').attr('href', `${username}`);
                 } else if (username.includes('.herokuapp.com') && username.includes('https://') === false) {
@@ -177,26 +62,27 @@
 
             function clickButtons() {
                 for (var i = 0; i < 6; i++) {
-                    $(`#timebut${(i+1)}`).click({i}, function (event) {
+                    $(`#button${(i+1)}`).click({i}, function (event) {
                         sgvTime = Math.pow(2, event.data.i)*3;
-                        console.log(sgvTime);
                         sgv();
                     })
                 }
             }
 
             function hrefChange(f) {
-                window.localStorage.setItem('name', f.comment[0].value);
+                window.localStorage.setItem('name', f);
                 var username = window.localStorage.getItem('name');
                 contact(username);
             }
 
+            var massiv = ['hrefChange()', 'contact()', 'range()'];
+
             var username = window.localStorage.getItem('name');
             if(username)contact(username);
 
-            function range(f) {
-                window.localStorage.setItem('input1', f.comment[0].value);
-                window.localStorage.setItem('input2', f.comment[1].value);
+            function range(f1, f2) {
+                window.localStorage.setItem('input1', f2);
+                window.localStorage.setItem('input2', f1);
                 var i1 = window.localStorage.getItem('input1');
                 var i2 = window.localStorage.getItem('input2');
                 if(i1)low = i1;
@@ -204,9 +90,9 @@
                 sgv();
             }
 
-            function calibration(f) {
-                window.localStorage.setItem('inp1', f.comment[0].value);
-                window.localStorage.setItem('inp2', f.comment[1].value);
+            function calibration(f1, f2) {
+                window.localStorage.setItem('inp1', f1);
+                window.localStorage.setItem('inp2', f2);
                 var input1 = window.localStorage.getItem('inp1');
                 var input2 = window.localStorage.getItem('inp2');
                 sgv();
@@ -218,12 +104,76 @@
             if(i1)low = i1;
             if(i2)high = i2;
 
+            var obj = [];
+            var res = [];
+
+            function confirm(object, value1, value2) {
+                if (!object.length) return;
+                if (object[0].id === 'dia_element1' || object[1].id === 'dia_element2') range(value1, value2);
+                if (object[0].id === 'cal_element1' || object[1].id === 'cal_element2') calibration(value1, value2);
+            }
+
+            function showDialog(object) {
+                obj = object;
+                $('#dialog').remove();
+                $(`<dialog id="dialog">
+                    <div class="dialog__content" id="dialog__content">
+                    </div>
+                    <div class="dialog__actions">
+                        <div class="dlg_buttons">
+                            <button id="dlg_close">Close</button>
+                            <button id="dlg_confirm">Confirm</button>
+                        </div>
+                    </div>
+                </dialog>`).appendTo('body');
+                for (var i = 0; i < obj.length; i++) {
+                    $(`<form>
+                        <p><label for="favAnimal">${obj[i].text}: </label>
+                        <input id="dlg_item_${i}" type="${obj[i].type}" name="comment"></p>
+                    </form>`).appendTo('#dialog__content');
+                    var id = obj[i].id;
+                    if(id){
+                        document.getElementById(`dlg_item_${i}`).value = window.localStorage.getItem(id);
+                    }
+                }
+                document.getElementById('dialog').show();
+                $('#dlg_close').click(() => {
+                    for(var i = 0; i < obj.length; i++) {
+                        var id = obj[i].id;
+                        window.localStorage.setItem(id, `${document.getElementById(`dlg_item_${i}`).value}`);
+                    }
+                    $('#dialog').remove();
+                });
+                $('#dlg_confirm').click(() => {
+                    for(var i = 0; i < obj.length; i++) {
+                        var id = obj[i].id;
+                        window.localStorage.setItem(id, `${document.getElementById(`dlg_item_${i}`).value}`);
+                    }
+                    if (obj.length === 1) {
+                        hrefChange(document.getElementById(`dlg_item_0`).value);
+                    } else {
+                        confirm(obj, document.getElementById(`dlg_item_0`).value, document.getElementById(`dlg_item_1`).value);
+                    }
+                    $('#dialog').remove();
+                });
+            }
+
+            $('#show_dlg_url').click(() => {
+                showDialog([{text: 'Nightscout url', id: 'url_element', type:'text'}]);
+            });
+            $('#show_dialog_dia').click(() => {
+                showDialog([{text: 'Высокий', id: 'dia_element1', type:'number'}, {text: 'Низкий', id: 'dia_element2', type:'number'}]);
+            });
+            $('#show_dlg_cal').click(() => {
+                showDialog([{text: 'Текущий сахар', id: 'cal_element1', type:'number'}, {text: 'Желательний сахар', id: 'cal_element2', type:'number'}]);
+            });
+
             function getSgv(i) {
                 var input1 = window.localStorage.getItem('inp1');
                 var input2 = window.localStorage.getItem('inp2');
                 if (input1) {
                     if (input2) {
-                        return object[i].sgv/18*((input2/input1).toFixed(1));
+                        return object[i].sgv/18*(input2/input1);
                     } else return object[i].sgv/18;
                 } else return object[i].sgv/18;
             }
@@ -438,12 +388,13 @@
                             var bestY = y;
                         }
                     }
-                    ctx.fillStyle = "black";
+
                     ctx.font = "20px Comic Sans MS";
                     ctx.fillStyle = "White";
                     ctx.textAlign = "left";
                     ctx.textBaseline = "top";
-                    ctx.fillText(`SUGAR: ${(getSgv(best)).toFixed(1)}`, w/2, 80)
+                    ctx.fillText(`SUGAR: ${(getSgv(best)).toFixed(1)}`, w/2, 80);
+                    ctx.fillText(`${sgvTimeAgo} min ago`, w/2+10, 50);
 
                     ctx.beginPath();
                     ctx.fillStyle = "White";
@@ -464,12 +415,14 @@
                 ctx.fillText("TIR: " + tir + "%", 10, 50);
                 ctx.fillText(`Average: ${average}`, 10, 85);
                 ctx.fillText(`SUGAR: ${(getSgv(0)).toFixed(1)}`, canvas.width/2-25, 10);
+                ctx.font = "20px Comic Sans MS";
+                ctx.fillText(`${sgvTimeAgo} min ago`, canvas.width/2+10, 50);
             }
 
             function sgv() {
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 number();
-                showStatistics()
+                showStatistics();
                 drawPoints();
                 drawLines();
                 clickCanvas();
@@ -530,161 +483,92 @@
 
             // the example of the update usage,
             // we just printing the count of updated records
+            ctx.font = "20px Comic Sans MS";
+            ctx.fillStyle = "White";
+            ctx.textAlign = "left";
+            ctx.textBaseline = "top";
+            ctx.fillText(`${sgvTimeAgo} min ago`, canvas.width/2, 50);
             update(() => sgv());
             setInterval(() => update(() => sgv()), object[0].date-object[1].date);
+            setInterval(function () {
+                sgvTimeAgo = Math.floor((Date.now() - object[0].date)/1000/60);
+                sgv();
+            }, 60000);
             if(object.length)sgv();
         </script>
     </body>
 
     <style>
-        #url{
-            color:rgb(173, 173, 173);
-            font-size: 20px;
-            position:relative;
-            left: 10px;
-        }
-        #urlcom{
-            display: none;
-            position:relative;
-            left: 10px;
-        }
-        #urlbut2{
-            display: none;
-            position:relative;
-            left: 10px;
+        .dlg_buttons{
+            text-align: center;
         }
 
-        #dia{
-            color:rgb(173, 173, 173);
+        #dialog{
+            color: rgb(173, 173, 173);
+            background-color: #222222;
+            border: #222222;
+            border-radius: 4px;
+            height: 160px;
             font-size: 20px;
-            position:relative;
-            left: 10px;
-        }
-        #low{
-            color:rgb(173, 173, 173);
-            font-size: 20px;
-            display: none;
-            position:relative;
-            left: 10px;
-        }
-        #diacom1{
-            display: none;position:relative;
-            left: 10px;
-        }
-        #high{
-            color:rgb(173, 173, 173);
-            font-size: 20px;
-            display: none;
-            position:relative;
-            left: 10px;
-        }
-        #diacom2{
-            display: none;
-            position:relative;
-            left: 10px;
-        }
-        #diabut2{
-            display: none;
-            position:relative;
-            left: 10px;
         }
 
-        #calibration{
-            color:rgb(173, 173, 173);
+        #dlg_close{
             font-size: 20px;
-            position:relative;
-            left: 10px;
-        }
-        #cal1{
-            color:rgb(173, 173, 173);
-            font-size: 20px;
-            display: none;
-            position:relative;
-            left: 10px;
-        }
-        #calcom1{
-            display: none;
-            position:relative;
-            left: 10px;
-        }
-        #cal2{
-            color:rgb(173, 173, 173);
-            font-size: 20px;
-            display: none;
-            position:relative;
-            left: 10px;
-        }
-        #calcom2{
-            display: none;
-            position:relative;
-            left: 10px;
-        }
-        #calbut2{
-            display: none;
-            position:relative;
-            left: 10px;
+            position: relative;
+            top: 15px;
+            background-color: #474646;
+            border: #474646;
+            border-radius: 4px;
+            color: rgb(173, 173, 173);
+            height: 35px;
+            width: 80px;
         }
 
-        #time{
-            color:rgb(173, 173, 173);
+        #dlg_close:hover{
+            background-color: #5c5b5b;
+        }
+
+        #dlg_confirm{
             font-size: 20px;
-            position:relative;
-            left: 10px;
+            position: relative;
+            top: 15px;
+            background-color: #474646;
+            border: #474646;
+            border-radius: 4px;
+            color: rgb(173, 173, 173);
+            height: 35px;
+            width: 80px;
         }
-        #timebut1{
-            display: none;
-            position:relative;
-            left: 10px;
+
+        #dlg_confirm:hover{
+            background-color: #5c5b5b;
         }
-        #timebut2{
-            display: none;
-            position:relative;
-            left: 10px;
+        #dlg_close{
+            font-size: 20px;
+            position: relative;
+            top: 15px;
+            background-color: #474646;
+            border: #474646;
+            border-radius: 4px;
+            color: rgb(173, 173, 173);
+            height: 35px;
+            width: 80px;
         }
-        #timebut3{
-            display: none;
-            position:relative;
-            left: 10px;
-        }
-        #timebut4{
-            display: none;
-            position:relative;
-            left: 10px;
-        }
-        #timebut5{
-            display: none;
-            position:relative;
-            left: 10px;
-        }
-        #timebut6{
-            display: none;
-            position:relative;
-            left: 10px;
-        }
+
         .myButton {
-            box-shadow:inset 0px 1px 0px 0px #ffffff;
-            background:linear-gradient(to bottom, #ededed 5%, #dfdfdf 100%);
-            background-color:#ededed;
-            border-radius:6px;
-            border:1px solid #dcdcdc;
+            background-color:rgb(0, 0, 0);
+            border-radius:4px;
+            border:rgb(0, 0, 0);
             display:inline-block;
             cursor:pointer;
-            color:#777777;
-            font-family:Arial;
-            font-size:15px;
-            font-weight:bold;
-            padding:8px 24px;
-            text-decoration:none;
-            text-shadow:0px 1px 0px #ffffff;
+            color:rgb(173, 173, 173);
+            font-size: 20px;
+            height: 25px;
         }
         .myButton:hover {
-            background:linear-gradient(to bottom, #dfdfdf 5%, #ededed 100%);
-            background-color:#dfdfdf;
+            background-color: #5c5b5b;
         }
-        .myButton:active {
-            position:relative;
-            top:1px;
-        }
+
         #canvas{
             position: absolute;
             top: 100;
@@ -725,6 +609,13 @@
         #bar:hover{
             color: #c54343;
         }
+        #buttons1{
+            border-top: 3px solid rgb(53, 53, 53);
+        }
+        #buttons2{
+            position: relative;
+            left: 20px;
+        }
         /* The side navigation menu */
         .sidenav {
             height: 100%; /* 100% Full-height */
@@ -747,6 +638,7 @@
             color: #e1deff;
             display: block;
             transition: 0.3s;   
+            cursor:pointer;
         }
 
         /* When you mouse over the navigation links, change their color */
