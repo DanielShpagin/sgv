@@ -3,7 +3,7 @@
     <body>
         <script src="https://kit.fontawesome.com/225277b5de.js" crossorigin="anonymous"></script>
         <script src='https://code.jquery.com/jquery-2.1.0.js'></script>
-
+        
         <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
             <a id="contact" href="#" target="_blank">Contact</a>
@@ -21,7 +21,7 @@
                     <button id="button3" class="myButton">12 HOURS</button><br>
                     <button id="button4" class="myButton">24 HOURS</button><br>
                     <button id="button5" class="myButton">2 DAYS</button><br>
-                    <button id="button6" class="myButton">4 DAYS</button> 
+                    <button id="button6" class="myButton">4 DAYS</button>
                 </div>
             </div>
         </div>
@@ -38,16 +38,25 @@
         <script>
             var canvas = document.getElementById("canvas");
             var ctx = canvas.getContext("2d");
+
             var high = 9;
             var veryHigh = 13;
+
             var low = 3.5;
             var veryLow = 2;
+
             var tir = 0;
             var average = 0;
             var num = 0;
+
             var sgvTime = 3;
             var sgvTimeAgo = 0;
 
+            if (window.localStorage.getItem('sgvTimeAgo')) {
+                sgvTimeAgo = window.localStorage.getItem('sgvTimeAgo');
+                console.log(sgvTimeAgo);
+            }
+            
             function contact() {
                 if (username.includes('https://') && username.includes('.herokuapp.com')) {
                     $('#contact').attr('href', `${username}`);
@@ -90,11 +99,15 @@
                 sgv();
             }
 
-            function calibration(f1, f2) {
+            function calibration(f1, f2, f3, f4) {
                 window.localStorage.setItem('inp1', f1);
                 window.localStorage.setItem('inp2', f2);
+                window.localStorage.setItem('inp3', f3);
+                window.localStorage.setItem('inp4', f4);
                 var input1 = window.localStorage.getItem('inp1');
                 var input2 = window.localStorage.getItem('inp2');
+                var input3 = window.localStorage.getItem('inp3');
+                var input4 = window.localStorage.getItem('inp4');
                 sgv();
             }
 
@@ -107,10 +120,16 @@
             var obj = [];
             var res = [];
 
-            function confirm(object, value1, value2) {
+            function confirm(object, value1, value2, value3, value4) {
                 if (!object.length) return;
-                if (object[0].id === 'dia_element1' || object[1].id === 'dia_element2') range(value1, value2);
-                if (object[0].id === 'cal_element1' || object[1].id === 'cal_element2') calibration(value1, value2);
+                if (object[0].id === 'dia_element1' || object[1].id === 'dia_element2') {
+                    range(value1, value2);
+                }
+                if (object[0].id === 'cal_element1' || object[1].id === 'cal_element2') {
+                    calibration(value1, value2, value3, value4);
+                }
+                if (value3) console.log(value3);
+                if (value4) console.log(value4);
             }
 
             function showDialog(object) {
@@ -125,7 +144,13 @@
                             <button id="dlg_confirm">Confirm</button>
                         </div>
                     </div>
-                </dialog>`).appendTo('body');
+                </dialog>`).css({
+                'color':'rgb(173, 173, 173)', 
+                'background-color':'#222222', 
+                'border':'#222222', 
+                'border-radius':'4px', 
+                'height':obj[0].height, 
+                'font-size':'20px'}).appendTo('body');
                 for (var i = 0; i < obj.length; i++) {
                     $(`<form>
                         <p><label for="favAnimal">${obj[i].text}: </label>
@@ -152,30 +177,65 @@
                     if (obj.length === 1) {
                         hrefChange(document.getElementById(`dlg_item_0`).value);
                     } else {
+                        if (obj.length === 4) {
+                            confirm(obj, document.getElementById(`dlg_item_0`).value, 
+                            document.getElementById(`dlg_item_1`).value, 
+                            document.getElementById(`dlg_item_2`).value, 
+                            document.getElementById(`dlg_item_3`).value);
+                            $('#dialog').remove();
+                            return;
+                        }
                         confirm(obj, document.getElementById(`dlg_item_0`).value, document.getElementById(`dlg_item_1`).value);
                     }
+                    cosnole.log(document.getElementById(`dlg_item_2`).value);
+                    if(document.getElementById(`dlg_item_0`).value) {
+                        var sgv1 = document.getElementById(`dlg_item_0`).value;
+                    } else
+                    if(document.getElementById(`dlg_item_1`).value) {
+                        var sgv2 = document.getElementById(`dlg_item_1`).value;
+                    } else 
+                    if(document.getElementById(`dlg_item_2`).value) {
+                        var sgv3 = document.getElementById(`dlg_item_2`).value;
+                    } else
+                    if(document.getElementById(`dlg_item_3`).value) {
+                        var sgv4 = document.getElementById(`dlg_item_3`).value;
+                    } else {
+                        var sgv_a = (sgv1 - sgv3) / (sgv2 - sgv4);
+                        var sgv_b = sgv_a * sgv1 - sgv2;
+                    }
+                    
                     $('#dialog').remove();
                 });
             }
 
             $('#show_dlg_url').click(() => {
-                showDialog([{text: 'Nightscout url', id: 'url_element', type:'text'}]);
+                showDialog([{text: 'Nightscout url', id: 'url_element', type:'text', height:'120px'}]);
             });
             $('#show_dialog_dia').click(() => {
-                showDialog([{text: 'Высокий', id: 'dia_element1', type:'number'}, {text: 'Низкий', id: 'dia_element2', type:'number'}]);
+                showDialog([{text: 'Высокий', id: 'dia_element1', type:'number', height:'160px'}, 
+                {text: 'Низкий', id: 'dia_element2', type:'number'}]);
             });
             $('#show_dlg_cal').click(() => {
-                showDialog([{text: 'Текущий сахар', id: 'cal_element1', type:'number'}, {text: 'Желательний сахар', id: 'cal_element2', type:'number'}]);
+                showDialog([{text: 'При сахаре', id: 'cal_element1', type:'number', height:'250px'}, 
+                {text: 'показывать', id: 'cal_element2', type:'number'}, 
+                {text: 'При сахаре', id: 'cal_element3', type:'number'}, 
+                {text: 'показывать', id: 'cal_element4', type:'number'}]);
             });
 
             function getSgv(i) {
-                var input1 = window.localStorage.getItem('inp1');
-                var input2 = window.localStorage.getItem('inp2');
-                if (input1) {
-                    if (input2) {
-                        return object[i].sgv/18*(input2/input1);
+                if (object[i].sgv/18 >= 1 || object[i].sgv/18 <= 30) {
+                    var input1 = window.localStorage.getItem('inp1');
+                    var input2 = window.localStorage.getItem('inp2');
+                    var input3 = window.localStorage.getItem('inp3');
+                    var input4 = window.localStorage.getItem('inp4');
+                    if (input1 && input2 && input3 && input4) {
+                        var sgv_a = (input2-input4)/(input1-input3);
+                        var sgv_b = input2 - sgv_a * input1;
+                        var sgv_y = sgv_a * object[i].sgv/18 + sgv_b;
+                        return sgv_y;
                     } else return object[i].sgv/18;
-                } else return object[i].sgv/18;
+                }
+                
             }
 
             function createScene() {
@@ -492,6 +552,8 @@
             setInterval(() => update(() => sgv()), object[0].date-object[1].date);
             setInterval(function () {
                 sgvTimeAgo = Math.floor((Date.now() - object[0].date)/1000/60);
+                if (window.localStorage.getItem('sgvTimeSgv')) window.localStorage.removeItem('sgvTimeSgv')
+                window.localStorage.setItem('sgvTimeSgv', sgvTimeAgo);
                 sgv();
             }, 60000);
             if(object.length)sgv();
@@ -501,15 +563,6 @@
     <style>
         .dlg_buttons{
             text-align: center;
-        }
-
-        #dialog{
-            color: rgb(173, 173, 173);
-            background-color: #222222;
-            border: #222222;
-            border-radius: 4px;
-            height: 160px;
-            font-size: 20px;
         }
 
         #dlg_close{
