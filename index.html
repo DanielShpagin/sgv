@@ -187,23 +187,6 @@
                         }
                         confirm(obj, document.getElementById(`dlg_item_0`).value, document.getElementById(`dlg_item_1`).value);
                     }
-                    cosnole.log(document.getElementById(`dlg_item_2`).value);
-                    if(document.getElementById(`dlg_item_0`).value) {
-                        var sgv1 = document.getElementById(`dlg_item_0`).value;
-                    } else
-                    if(document.getElementById(`dlg_item_1`).value) {
-                        var sgv2 = document.getElementById(`dlg_item_1`).value;
-                    } else 
-                    if(document.getElementById(`dlg_item_2`).value) {
-                        var sgv3 = document.getElementById(`dlg_item_2`).value;
-                    } else
-                    if(document.getElementById(`dlg_item_3`).value) {
-                        var sgv4 = document.getElementById(`dlg_item_3`).value;
-                    } else {
-                        var sgv_a = (sgv1 - sgv3) / (sgv2 - sgv4);
-                        var sgv_b = sgv_a * sgv1 - sgv2;
-                    }
-                    
                     $('#dialog').remove();
                 });
             }
@@ -531,8 +514,8 @@
                                     console.error(e);
                                     window.localStorage.removeItem(keeperName);
                                 }
-                                if (object.length >= 10000){
-                                    object.splice(10000, object.length-10000);
+                                if (object.length >= 3000){
+                                    object.splice(3000, object.length-3000);
                                 }
                                 if (callback) callback();
                             }
