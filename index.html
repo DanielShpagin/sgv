@@ -11,7 +11,7 @@
             <a id="show_dlg_url">Nightscout url</a>
 
             <a id="show_dialog_dia">Целевой диапазон</a>
-
+ 
             <a id="show_dlg_cal">Калибровка</a>
 
             <div id="buttons1">
@@ -35,6 +35,16 @@
             </div>
         </div>
 
+        <dialog id="beginning_dialog">
+            <div class="dlg_beginning_imtems">
+                <a id="dlg_beginning_item_text">Nightscout url: </a>
+                <input id="dlg_beginning_item_comment" type="text" name="comment"></p>
+            </div>
+            <div class="dlg_buttons">
+                <button id="dlg_beginning_confirm">Confirm</button>
+            </div>
+        </dialog>
+
         <script>
             var canvas = document.getElementById("canvas");
             var ctx = canvas.getContext("2d");
@@ -51,6 +61,9 @@
 
             var sgvTime = 3;
             var sgvTimeAgo = 0;
+
+            var width = canvas.width;
+            var height = canvas.height;
 
             if (window.localStorage.getItem('sgvTimeAgo')) {
                 sgvTimeAgo = window.localStorage.getItem('sgvTimeAgo');
@@ -87,7 +100,7 @@
             var massiv = ['hrefChange()', 'contact()', 'range()'];
 
             var username = window.localStorage.getItem('name');
-            if(username)contact(username);
+            if (username) contact(username);
 
             function range(f1, f2) {
                 window.localStorage.setItem('input1', f2);
@@ -111,6 +124,12 @@
                 sgv();
             }
 
+            function beginning(f) {
+                window.localStorage.setItem('name', f);
+                var username = window.localStorage.getItem('name');
+                contact(username);
+            }
+
             var i1 = window.localStorage.getItem('input1');
             var i2 = window.localStorage.getItem('input2');
 
@@ -128,8 +147,6 @@
                 if (object[0].id === 'cal_element1' || object[1].id === 'cal_element2') {
                     calibration(value1, value2, value3, value4);
                 }
-                if (value3) console.log(value3);
-                if (value4) console.log(value4);
             }
 
             function showDialog(object) {
@@ -203,7 +220,7 @@
                 {text: 'показывать', id: 'cal_element2', type:'number'}, 
                 {text: 'При сахаре', id: 'cal_element3', type:'number'}, 
                 {text: 'показывать', id: 'cal_element4', type:'number'}]);
-            });
+            }); 
 
             function getSgv(i) {
                 if (object[i].sgv/18 >= 1 || object[i].sgv/18 <= 30) {
@@ -261,29 +278,32 @@
             function drawPoints() {
                 for (var i = 0; i < object.length; i++) {
                     var w = canvas.width;
+                    var h = canvas.height;
+
                     var time = sgvTime;
                     var t0 = Date.now();
                     var T = time*60*60*1000;
                     var best = i;
-                    var date = object[i].date;
-                    var x = w - ((t0 - date) / T) * w;
                     var b = 15;
-                    var h = canvas.height;
+
+                    var date = object[i].date;
                     var s = getSgv(i);
+
+                    var x = w - ((t0 - date) / T) * w;
                     var y = h-s*h/b;
+
                     var bestX = x;
                     var bestY = y;
 
-                    ctx.beginPath();
-                
-                    if (getSgv(i) >= high) {
+                    if (s >= high) {
                         ctx.strokeStyle = ctx.fillStyle = "Yellow";                                    
-                    } else if (getSgv(i) <= low) {
+                    } else if (s <= low) {
                         ctx.strokeStyle = ctx.fillStyle = "Red";
                     } else {
                         ctx.strokeStyle = ctx.fillStyle = "Green";
                     }
 
+                    ctx.beginPath();
                     ctx.arc(bestX, bestY, 3, 0, Math.PI * 2);
                     ctx.fill();
                 }
@@ -334,33 +354,49 @@
                 var y3 = h1-high*h1/b1;
                 var y4 = h1-veryLow*h1/b1;
                 var y5 = h1-veryHigh*h1/b1;
-                var hourX = canvas.width/sgvTime;
-                var hours = new Date().getHours();
-                hours -= sgvTime;
-                
-                for (var i = 0; i < sgvTime; i++) {
-                    if (i === 0) {
-                        hours++;
-                    }
-                    hours++;
+                var hourX = (w1-y5)/sgvTime;
+                var date = new Date();
+                var hours = date.getHours();
+                var minutes = date.getMinutes();
+                var scale = 1;
+
+                var time = w1-minutes/60*w1/sgvTime;
+
+                var i = 0;
+                var step;
+
+                if (sgvTime === 48) {
+                    scale = 4;
+                }
+
+                if (sgvTime === 96) {
+                    scale = 8;
+                }
+
+                while (hourX < w1) {
                     ctx.font = "10px Comic Sans MS";
                     ctx.fillStyle = "White";
                     ctx.textAlign = "left";
                     ctx.textBaseline = "top";
-                    ctx.fillText(`${(hours+24)%24}:00`, hourX-10, y5-20);
-                    ctx.beginPath();
+
+                    ctx.fillText(`${(hours+24*scale)%24}:00`, time-10, y5-20);
 
                     ctx.strokeStyle = "White";
                     ctx.lineWidth = 1;
 
-                    ctx.moveTo(hourX, y5);
-                    ctx.lineTo(hourX, canvas.height);
+                    ctx.beginPath();
+                    ctx.moveTo(time, y5);
+                    ctx.lineTo(time, h1);
                     ctx.stroke();
-                    hourX += canvas.width/sgvTime;
+
+                    hourX += w1/sgvTime*scale;
+                    time -= w1/sgvTime*scale;
+                    hours -= scale;
+                    i++;
                 }
-                
+
                 ctx.strokeStyle = "Red";
-                
+
                 ctx.beginPath();
                 ctx.moveTo(40, y2);
                 ctx.lineTo(w1, y2);
@@ -448,22 +484,29 @@
 
             function showStatistics() {
                 var input = localStorage.getItem('input');
+
                 ctx.fillStyle = "rgb(50, 50, 50)";
+
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx.fillRect(0, 0, canvas.width, canvas.height);
+
                 ctx.font = "30px Comic Sans MS";
                 ctx.fillStyle = "White";
                 ctx.textAlign = "left";
                 ctx.textBaseline = "top";
+
                 ctx.fillText(`Целевой диапазон: ${low} ... ${high}`, 10, 5);
                 ctx.fillText("TIR: " + tir + "%", 10, 50);
                 ctx.fillText(`Average: ${average}`, 10, 85);
                 ctx.fillText(`SUGAR: ${(getSgv(0)).toFixed(1)}`, canvas.width/2-25, 10);
+
                 ctx.font = "20px Comic Sans MS";
+
                 ctx.fillText(`${sgvTimeAgo} min ago`, canvas.width/2+10, 50);
             }
 
             function sgv() {
-                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                ctx.clearRect(0, 0, width, height);
                 number();
                 showStatistics();
                 drawPoints();
@@ -514,9 +557,11 @@
                                     console.error(e);
                                     window.localStorage.removeItem(keeperName);
                                 }
-                                if (object.length >= 3000){
-                                    object.splice(3000, object.length-3000);
-                                }
+                                console.log(object.length);
+                                //if (object.length >= 3000){
+                                //    object.splice(3000, object.length-3000);
+                                //}
+                                console.log(object.length);
                                 if (callback) callback();
                             }
                         }
@@ -526,16 +571,14 @@
 
             // the example of the update usage,
             // we just printing the count of updated records
-            ctx.font = "20px Comic Sans MS";
-            ctx.fillStyle = "White";
-            ctx.textAlign = "left";
-            ctx.textBaseline = "top";
-            ctx.fillText(`${sgvTimeAgo} min ago`, canvas.width/2, 50);
             update(() => sgv());
-            setInterval(() => update(() => sgv()), object[0].date-object[1].date);
+
+            // setInterval(() => update(() => sgv()), object[0].date-object[1].date);
+
+            console.log((object[0].date-object[1].date)/1000/60);
             setInterval(function () {
                 sgvTimeAgo = Math.floor((Date.now() - object[0].date)/1000/60);
-                if (window.localStorage.getItem('sgvTimeSgv')) window.localStorage.removeItem('sgvTimeSgv')
+                if (window.localStorage.getItem('sgvTimeSgv')) window.localStorage.removeItem('sgvTimeSgv');
                 window.localStorage.setItem('sgvTimeSgv', sgvTimeAgo);
                 sgv();
             }, 60000);
@@ -544,6 +587,63 @@
     </body>
 
     <style>
+        #dlg_beginning_confirm{
+            font-size: 35px;
+            position: relative;
+            background-color: #474646;
+            border: #474646;
+            border-radius: 4px;
+            color: rgb(173, 173, 173);
+            height: 70px;
+            width: 150px;
+            position: relative;
+            top: 600px;
+        }
+
+        #dlg_beginning_confirm:hover{
+            background-color: #5c5b5b;
+        }
+
+        #beginning_dialog{
+            color:rgb(173, 173, 173);
+            background-color: #222222; 
+
+            border: #222222;
+            border-radius:4px; 
+
+            height: 800px;
+            width: 1600px;
+
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%);
+        }
+
+        #dlg_beginning_item_comment{
+            font-size: 50px;
+
+            margin: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%);
+            height: 100px;
+            width: 500px;
+        }
+
+        #dlg_beginning_item_text{
+            font-size: 50px;
+            color: rgb(173, 173, 173);
+
+            position: absolute;
+            top: 385px;
+            left: 200px;
+        }
+
         .dlg_buttons{
             text-align: center;
         }
